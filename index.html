@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Resume Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Roboto', Arial, sans-serif; background: #f7f7f7; margin:0; padding:20px;}
+  h1 { text-align:center; margin-bottom:15px;}
+  .container { display:flex; gap:20px; max-width:1400px; margin:auto; flex-wrap:wrap;}
+  .form-section { flex:1; background:white; padding:15px; border-radius:6px; box-shadow:0 0 5px rgba(0,0,0,0.1); max-height:90vh; overflow-y:auto; min-width:300px;}
+  .form-section label { font-weight:500; display:block; margin-top:10px;}
+  .form-section input, .form-section textarea, .form-section select { width:100%; padding:8px; margin-top:4px; font-size:14px; border:1px solid #ccc; border-radius:4px; box-sizing:border-box;}
+  .form-section textarea { resize:vertical;}
+  .buttons { margin-top:15px; display:flex; gap:10px; flex-wrap:wrap;}
+  .buttons button { padding:8px 12px; border:none; cursor:pointer; background:#007BFF; color:white; border-radius:4px;}
+  .buttons button:hover { background:#0056b3;}
+  .preview-section { flex:1; background:white; padding:0; border-radius:6px; box-shadow:0 0 5px rgba(0,0,0,0.1); min-width:400px;}
+
+  /* PREVIEW — size + margins exactly match PDF */
+  .resume-preview {
+    background:white;
+    width:8.5in;
+    margin:0;
+    box-sizing:border-box;
+    font-family:"Times New Roman", Times, serif;
+    font-size:12pt;
+    line-height:1.4;
+    color:black;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .resume-content {
+    padding:0.5in; /* visual padding */
+  }
+
+  .header-info { margin-bottom:10px; border-bottom:2px solid #333; padding-bottom:5px;}
+  .header-name { font-weight:bold; font-size:16pt; margin-top:0; margin-bottom:2px;}
+  .contact-info { margin-bottom:3px;}
+  .section-title { font-weight:bold; margin-top:15px; margin-bottom:5px; text-transform:uppercase; color:#333; border-bottom:1px solid #ccc; padding-bottom:2px; page-break-inside: avoid; break-inside: avoid;}
+  .entry { margin-bottom:10px; position:relative; padding-right:30px;}
+  .entry-title { font-weight:bold;}
+  .entry-details { font-style:italic; color:#555; margin-bottom:3px;}
+  .entry-description { margin-left:15px;}
+  .delete-btn { position:absolute; right:0; top:0; background:red; color:white; border:none; padding:0 6px; cursor:pointer; border-radius:3px;}
+
+  #atsKeywords { background:#f0f0f0; padding:10px; margin-bottom:10px; border-radius:4px; max-height:120px; overflow-y:auto;}
+  #atsKeywords span { display:inline-block; margin:2px 4px; padding:2px 5px; background:#ddd; border-radius:3px; cursor:pointer;}
+  #atsKeywords span.used { background:#4CAF50; color:white;}
+</style>
+</head>
+<body>
+
+<h1>Resume Builder</h1>
+
+<div class="container">
+  <div class="form-section">
+    <label>ATS Keywords</label>
+    <div id="atsKeywords"></div>
+
+    <label for="theme">Select Theme:</label>
+    <select id="theme">
+      <option value="classic">Classic (Navy)</option>
+      <option value="modern">Modern (Slate)</option>
+      <option value="elegant">Elegant (Burgundy)</option>
+      <option value="minimal">Minimal (Charcoal)</option>
+      <option value="professional">Professional (Navy Top Rule)</option>
+      <option value="contemporary">Contemporary (Deep Green)</option>
+    </select>
+
+    <label>Font Family:</label>
+    <select id="fontFamily">
+      <option value="Times New Roman, Times, serif">Times New Roman</option>
+      <option value="Arial, sans-serif">Arial</option>
+      <option value="Roboto, sans-serif">Roboto</option>
+      <option value="Georgia, serif">Georgia</option>
+      <option value="Verdana, sans-serif">Verdana</option>
+      <option value="Tahoma, sans-serif">Tahoma</option>
+    </select>
+
+    <label>Font Size:</label>
+    <select id="fontSize">
+      <option value="10pt">10 pt</option>
+      <option value="11pt">11 pt</option>
+      <option value="12pt" selected>12 pt</option>
+      <option value="13pt">13 pt</option>
+      <option value="14pt">14 pt</option>
+      <option value="16pt">16 pt</option>
+    </select>
+
+    <label>Your Name:</label>
+    <input type="text" id="name" placeholder="Full Name">
+    <label>Your Title:</label>
+    <input type="text" id="title" placeholder="Registered Nurse, ICU Nurse, etc.">
+    <label>Phone:</label>
+    <input type="text" id="phone" placeholder="(123) 456-7890">
+    <label>Email:</label>
+    <input type="text" id="email" placeholder="you@email.com">
+
+    <label>Professional Summary / Objective:</label>
+    <select id="specialty">
+      <option value="">-- Choose Nurse Specialty Template --</option>
+      <option value="medsurg">Medical-Surgical Nurse</option>
+      <option value="icu">ICU Nurse</option>
+      <option value="er">Emergency Room Nurse</option>
+      <option value="travel">Travel Nurse</option>
+      <option value="leadership">Nurse Leadership</option>
+      <option value="newgrad">New Graduate Nurse</option>
+    </select>
+    <textarea id="summary" rows="5" placeholder="Professional summary..."></textarea>
+
+    <div id="experience-section">
+      <label>Experience Entries:</label>
+      <button type="button" id="add-experience">Add Experience</button>
+    </div>
+
+    <div id="education-section">
+      <label>Education Entries:</label>
+      <button type="button" id="add-education">Add Education</button>
+    </div>
+
+    <div id="skills-section">
+      <label>Skills:</label>
+    </div>
+
+    <div id="cert-section">
+      <label>Certifications:</label>
+    </div>
+
+    <div class="buttons">
+      <button id="resetBtn">Reset</button>
+      <button id="downloadBtn">Download PDF</button>
+    </div>
+  </div>
+
+  <div class="preview-section">
+    <div id="resumePreview" class="resume-preview">
+      <div class="resume-content">
+        <div class="header-info">
+          <div class="header-name" id="prevName">Full Name</div>
+          <div id="prevTitle">Title</div>
+          <div class="contact-info" id="prevPhone">Phone</div>
+          <div class="contact-info" id="prevEmail">Email</div>
+        </div>
+        <div>
+          <div class="section-title">Professional Summary</div>
+          <div id="prevSummary"></div>
+        </div>
+        <div>
+          <div class="section-title">Experience</div>
+          <div id="prevExperience"></div>
+        </div>
+        <div>
+          <div class="section-title">Education</div>
+          <div id="prevEducation"></div>
+        </div>
+        <div>
+          <div class="section-title">Skills</div>
+          <div id="prevSkills"></div>
+        </div>
+        <div>
+          <div class="section-title">Certifications</div>
+          <div id="prevCerts"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script>
+const themeColors = { classic:'#0b3d91', modern:'#6c757d', elegant:'#800020', minimal:'#333', professional:'#0b3d91', contemporary:'#004d40' };
+
+const specialties = {
+  medsurg:`Experienced Medical-Surgical Nurse with strong track record providing comprehensive patient care in diverse healthcare settings. Skilled in assessments, care planning, and interdisciplinary collaboration to improve patient outcomes.`,
+  icu:`ICU Nurse with extensive experience caring for critically ill patients. Proficient in monitoring, ventilator management, and rapid response interventions, delivering safe and effective care in high-stress environments.`,
+  er:`Emergency Room Nurse experienced in rapid triage, acute care interventions, and managing multiple emergencies simultaneously. Strong skills in critical decision-making and patient stabilization.`,
+  travel:`Travel Nurse with adaptability to diverse healthcare environments, quickly integrating into new teams and delivering consistent, high-quality care. Skilled in patient education, clinical assessments, and teamwork.`,
+  leadership:`Nursing professional with leadership experience managing clinical teams, improving workflow efficiency, mentoring staff, and ensuring compliance with healthcare standards and policies.`,
+  newgrad:`Recent nursing graduate with strong academic foundation and clinical experience. Skilled in patient care, documentation, and eager to contribute to a dynamic healthcare team while continuing professional development.`
+};
+
+const atsKeywordsList = ["Patient Care","Critical Thinking","Assessment","Communication","EMR","Team Collaboration","Medication Administration","ICU","ER","Leadership","Travel Nursing","New Graduate","Evidence-Based","Compassion","Quality Improvement"];
+const atsContainer = document.getElementById('atsKeywords');
+atsKeywordsList.forEach(word=>{
+  const span = document.createElement('span');
+  span.textContent = word;
+  atsContainer.appendChild(span);
+});
+
+function formatDate(dateStr){ if(!dateStr) return ''; const d=new Date(dateStr); return d.toLocaleString('default',{month:'long',year:'numeric'}); }
+
+function updatePreview(){
+  const name=document.getElementById('name').value||'Full Name';
+  const title=document.getElementById('title').value||'Title';
+  const phone=document.getElementById('phone').value||'Phone';
+  const email=document.getElementById('email').value||'Email';
+  const theme=document.getElementById('theme').value;
+
+  document.getElementById('prevName').textContent=name;
+  document.getElementById('prevTitle').textContent=title;
+  document.getElementById('prevPhone').textContent=phone;
+  document.getElementById('prevEmail').textContent=email;
+
+  document.querySelector('.header-info').style.borderBottomColor=themeColors[theme];
+  document.querySelectorAll('.section-title').forEach(el=>el.style.color=themeColors[theme]);
+
+  const fontFamily = document.getElementById('fontFamily').value;
+  const fontSize = document.getElementById('fontSize').value;
+  const resumeEl = document.getElementById('resumePreview');
+  resumeEl.style.fontFamily = fontFamily;
+  resumeEl.style.fontSize = fontSize;
+
+  document.getElementById('prevSummary').innerHTML=document.getElementById('summary').value.replace(/\n/g,'<br>');
+
+  // Experience
+  const expContainer=document.getElementById('prevExperience');
+  expContainer.innerHTML='';
+  document.querySelectorAll('#experience-section .entry').forEach(entry=>{
+    const job=entry.querySelector('.job-title')?.value;
+    const employer=entry.querySelector('.employer')?.value;
+    const city=entry.querySelector('.city')?.value;
+    const state=entry.querySelector('.state')?.value;
+    const start=entry.querySelector('.start-date')?.value;
+    const end=entry.querySelector('.end-date')?.value;
+    const descType=entry.querySelector('.desc-type')?.value;
+    const desc=entry.querySelector('.description')?.value;
+    if(job||employer){
+      let html=`<div class="entry"><div class="entry-title">${job}</div>`;
+      html+=`<div class="entry-details">${employer}, ${city}, ${state} | ${formatDate(start)} - ${formatDate(end)}</div>`;
+      if(desc){
+        if(descType==='bullet'){
+          const bullets=desc.split(/\n|,/).map(d=>d.trim()).filter(Boolean).map(d=>`<li>${d}</li>`).join('');
+          html+=`<ul class="entry-description">${bullets}</ul>`;
+        } else { html+=`<div class="entry-description">${desc.replace(/\n/g,'<br>')}</div>`;}
+      }
+      html+='</div>'; expContainer.innerHTML+=html;
+    }
+  });
+
+  // Education
+  const eduContainer=document.getElementById('prevEducation');
+  eduContainer.innerHTML='';
+  document.querySelectorAll('#education-section .entry').forEach(entry=>{
+    const degree=entry.querySelector('.degree')?.value;
+    const school=entry.querySelector('.school')?.value;
+    const city=entry.querySelector('.city')?.value;
+    const state=entry.querySelector('.state')?.value;
+    const start=entry.querySelector('.edu-start-date')?.value;
+    const end=entry.querySelector('.edu-end-date')?.value;
+    if(degree||school){
+      eduContainer.innerHTML+=`<div class="entry"><div class="entry-title">${degree}</div><div class="entry-details">${school}, ${city}, ${state} | ${formatDate(start)} - ${formatDate(end)}</div></div>`;
+    }
+  });
+
+  // Skills
+  const skillContainer=document.getElementById('prevSkills');
+  skillContainer.innerHTML='';
+  document.querySelectorAll('#skills-section .entry').forEach(entry=>{
+    const text=entry.querySelector('.skill-text')?.value;
+    if(text){
+      const bullets=text.split(/\n|,/).map(s=>s.trim()).filter(Boolean).map(s=>`<li>${s}</li>`).join('');
+      skillContainer.innerHTML+=`<ul class="entry-description">${bullets}</ul>`;
+    }
+  });
+
+  // Certifications
+  const certContainer=document.getElementById('prevCerts');
+  certContainer.innerHTML='';
+  document.querySelectorAll('#cert-section .entry').forEach(entry=>{
+    const name=entry.querySelector('.cert-name')?.value;
+    if(name){ certContainer.innerHTML+=`<div class="entry"><div class="entry-title">${name}</div></div>`; }
+  });
+
+  // ATS keyword highlighting
+  atsContainer.querySelectorAll('span').forEach(span=>{
+    const used=(document.getElementById('summary').value + " " +
+      Array.from(document.querySelectorAll('#experience-section .entry .description')).map(d=>d.value).join(' ') +
+      Array.from(document.querySelectorAll('#skills-section .entry .skill-text')).map(d=>d.value).join(' ')
+    ).toLowerCase().includes(span.textContent.toLowerCase());
+    if(used) span.classList.add('used'); else span.classList.remove('used');
+  });
+}
+
+// Dynamic entry helpers
+function addEntry(containerId, htmlContent){
+  const container=document.getElementById(containerId);
+  const div=document.createElement('div'); div.className='entry'; div.innerHTML=htmlContent;
+
+  const del=div.querySelector('.delete-btn');
+  if(del) del.addEventListener('click',()=>{ div.remove(); updatePreview(); });
+
+  div.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input', updatePreview));
+
+  const addBtnId = containerId==='experience-section' ? 'add-experience' : 'add-education';
+  const addBtn = document.getElementById(addBtnId);
+  container.insertBefore(div, addBtn);
+
+  updatePreview();
+}
+
+// Buttons
+document.getElementById('add-experience').addEventListener('click',()=>addEntry('experience-section',`
+  <input type="text" class="job-title" placeholder="Job Title">
+  <input type="text" class="employer" placeholder="Employer">
+  <input type="text" class="city" placeholder="City">
+  <input type="text" class="state" placeholder="State">
+  <label>Start / End Date:</label>
+  <input type="date" class="start-date"> - <input type="date" class="end-date">
+  <select class="desc-type"><option value="paragraph">Paragraph</option><option value="bullet">Bullet Points</option></select>
+  <textarea class="description" rows="3" placeholder="Description or bullet points..."></textarea>
+  <button class="delete-btn">X</button>
+`));
+
+document.getElementById('add-education').addEventListener('click',()=>addEntry('education-section',`
+  <input type="text" class="degree" placeholder="Degree / Certification">
+  <input type="text" class="school" placeholder="School / Institution">
+  <input type="text" class="city" placeholder="City">
+  <input type="text" class="state" placeholder="State">
+  <label>Start / End Date:</label>
+  <input type="date" class="edu-start-date"> - <input type="date" class="edu-end-date">
+  <button class="delete-btn">X</button>
+`));
+
+// Initial skill & cert input
+function addSkillOrCert(containerId, className, placeholder){
+  const container=document.getElementById(containerId);
+  const div=document.createElement('div'); div.className='entry';
+  div.innerHTML=`<textarea class="${className}" rows="2" placeholder="${placeholder}"></textarea>`;
+  div.querySelector('textarea').addEventListener('input', updatePreview);
+  container.appendChild(div);
+}
+addSkillOrCert('skills-section','skill-text','Skill or list, comma separated');
+addSkillOrCert('cert-section','cert-name','Certification Name');
+
+// Live updates
+document.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input', updatePreview));
+document.getElementById('specialty').addEventListener('change', e=>{document.getElementById('summary').value=specialties[e.target.value]||''; updatePreview();});
+document.getElementById('resetBtn').addEventListener('click',()=>{document.querySelectorAll('input,textarea').forEach(el=>el.value=''); updatePreview();});
+
+// PDF download
+document.getElementById('downloadBtn').addEventListener('click',()=>{
+  const element=document.getElementById('resumePreview');
+  const opt = {
+    margin: [0,0,0,0],
+    filename:'Resume.pdf',
+    image:{type:'jpeg', quality:1},
+    html2canvas:{scale:2, useCORS:true, backgroundColor:'#ffffff'},
+    jsPDF:{unit:'in', format:'letter', orientation:'portrait'},
+    pagebreak:{mode:['avoid-all','css','legacy']}
+  };
+  html2pdf().set(opt).from(element).save();
+});
+
+updatePreview();
+</script>
+</body>
+</html>
