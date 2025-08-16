@@ -7,6 +7,7 @@
 <style>
   body { font-family: 'Roboto', Arial, sans-serif; background: #f7f7f7; margin:0; padding:20px;}
   h1 { text-align:center; margin-bottom:15px;}
+  .hidden { display:none; }
   .container { display:flex; gap:20px; max-width:1400px; margin:auto; flex-wrap:wrap;}
   .form-section { flex:1; background:white; padding:15px; border-radius:6px; box-shadow:0 0 5px rgba(0,0,0,0.1); max-height:90vh; overflow-y:auto; min-width:300px;}
   .form-section label { font-weight:500; display:block; margin-top:10px;}
@@ -16,8 +17,6 @@
   .buttons button { padding:8px 12px; border:none; cursor:pointer; background:#007BFF; color:white; border-radius:4px;}
   .buttons button:hover { background:#0056b3;}
   .preview-section { flex:1; background:white; padding:0; border-radius:6px; box-shadow:0 0 5px rgba(0,0,0,0.1); min-width:400px;}
-
-  /* PREVIEW — size + margins exactly match PDF */
   .resume-preview {
     background:white;
     width:8.5in;
@@ -30,11 +29,7 @@
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
-
-  .resume-content {
-    padding:0.5in; /* visual padding */
-  }
-
+  .resume-content { padding:0.5in; }
   .header-info { margin-bottom:10px; border-bottom:2px solid #333; padding-bottom:5px;}
   .header-name { font-weight:bold; font-size:16pt; margin-top:0; margin-bottom:2px;}
   .contact-info { margin-bottom:3px;}
@@ -44,7 +39,6 @@
   .entry-details { font-style:italic; color:#555; margin-bottom:3px;}
   .entry-description { margin-left:15px;}
   .delete-btn { position:absolute; right:0; top:0; background:red; color:white; border:none; padding:0 6px; cursor:pointer; border-radius:3px;}
-
   #atsKeywords { background:#f0f0f0; padding:10px; margin-bottom:10px; border-radius:4px; max-height:120px; overflow-y:auto;}
   #atsKeywords span { display:inline-block; margin:2px 4px; padding:2px 5px; background:#ddd; border-radius:3px; cursor:pointer;}
   #atsKeywords span.used { background:#4CAF50; color:white;}
@@ -52,17 +46,10 @@
 </head>
 <body>
 
-<script>
-// PASSWORD PROTECTION
-const password = "NURSERESUME2025"; // set your password here
-const userInput = prompt("Enter password to access this page:");
-if (!userInput || userInput !== password) {
-    document.body.innerHTML = "<h1>Access Denied</h1>";
-} else {
-    document.write(`
-<div id="protectedContent">
-<h1>Resume Builder</h1>
+<h1 id="accessDenied" class="hidden">Access Denied</h1>
 
+<div id="protectedContent" class="hidden">
+<h1>Resume Builder</h1>
 <div class="container">
   <div class="form-section">
     <label>ATS Keywords</label>
@@ -177,10 +164,24 @@ if (!userInput || userInput !== password) {
   </div>
 </div>
 </div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script>
-// Resume Builder JS
+// PASSWORD PROTECTION
+const password = "mypassword"; // change this
+const userInput = prompt("Enter password to access this page:");
+
+if(userInput === password){
+    document.getElementById('protectedContent').classList.remove('hidden');
+}else{
+    document.getElementById('accessDenied').classList.remove('hidden');
+}
+
+// Only run the rest of JS if correct password entered
+if(userInput === password){
+
 const themeColors = { classic:'#0b3d91', modern:'#6c757d', elegant:'#800020', minimal:'#333', professional:'#0b3d91', contemporary:'#004d40' };
+
 const specialties = {
   medsurg:`Experienced Medical-Surgical Nurse with strong track record providing comprehensive patient care in diverse healthcare settings. Skilled in assessments, care planning, and interdisciplinary collaboration to improve patient outcomes.`,
   icu:`ICU Nurse with extensive experience caring for critically ill patients. Proficient in monitoring, ventilator management, and rapid response interventions, delivering safe and effective care in high-stress environments.`,
@@ -193,7 +194,9 @@ const specialties = {
 const atsKeywordsList = ["Patient Care","Critical Thinking","Assessment","Communication","EMR","Team Collaboration","Medication Administration","ICU","ER","Leadership","Travel Nursing","New Graduate","Evidence-Based","Compassion","Quality Improvement"];
 const atsContainer = document.getElementById('atsKeywords');
 atsKeywordsList.forEach(word=>{
-  const span = document.createElement('span'); span.textContent = word; atsContainer.appendChild(span);
+  const span = document.createElement('span');
+  span.textContent = word;
+  atsContainer.appendChild(span);
 });
 
 function formatDate(dateStr){ if(!dateStr) return ''; const d=new Date(dateStr); return d.toLocaleString('default',{month:'long',year:'numeric'}); }
@@ -221,7 +224,9 @@ function updatePreview(){
 
   document.getElementById('prevSummary').innerHTML=document.getElementById('summary').value.replace(/\n/g,'<br>');
 
-  const expContainer=document.getElementById('prevExperience'); expContainer.innerHTML='';
+  // Experience
+  const expContainer=document.getElementById('prevExperience');
+  expContainer.innerHTML='';
   document.querySelectorAll('#experience-section .entry').forEach(entry=>{
     const job=entry.querySelector('.job-title')?.value;
     const employer=entry.querySelector('.employer')?.value;
@@ -244,7 +249,9 @@ function updatePreview(){
     }
   });
 
-  const eduContainer=document.getElementById('prevEducation'); eduContainer.innerHTML='';
+  // Education
+  const eduContainer=document.getElementById('prevEducation');
+  eduContainer.innerHTML='';
   document.querySelectorAll('#education-section .entry').forEach(entry=>{
     const degree=entry.querySelector('.degree')?.value;
     const school=entry.querySelector('.school')?.value;
@@ -257,7 +264,9 @@ function updatePreview(){
     }
   });
 
-  const skillContainer=document.getElementById('prevSkills'); skillContainer.innerHTML='';
+  // Skills
+  const skillContainer=document.getElementById('prevSkills');
+  skillContainer.innerHTML='';
   document.querySelectorAll('#skills-section .entry').forEach(entry=>{
     const text=entry.querySelector('.skill-text')?.value;
     if(text){
@@ -266,12 +275,15 @@ function updatePreview(){
     }
   });
 
-  const certContainer=document.getElementById('prevCerts'); certContainer.innerHTML='';
+  // Certifications
+  const certContainer=document.getElementById('prevCerts');
+  certContainer.innerHTML='';
   document.querySelectorAll('#cert-section .entry').forEach(entry=>{
     const name=entry.querySelector('.cert-name')?.value;
     if(name){ certContainer.innerHTML+=`<div class="entry"><div class="entry-title">${name}</div></div>`; }
   });
 
+  // ATS keyword highlighting
   atsContainer.querySelectorAll('span').forEach(span=>{
     const used=(document.getElementById('summary').value + " " +
       Array.from(document.querySelectorAll('#experience-section .entry .description')).map(d=>d.value).join(' ') +
@@ -281,20 +293,24 @@ function updatePreview(){
   });
 }
 
-// Dynamic entries
+// Dynamic entry helpers
 function addEntry(containerId, htmlContent){
   const container=document.getElementById(containerId);
   const div=document.createElement('div'); div.className='entry'; div.innerHTML=htmlContent;
+
   const del=div.querySelector('.delete-btn');
   if(del) del.addEventListener('click',()=>{ div.remove(); updatePreview(); });
+
   div.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input', updatePreview));
+
   const addBtnId = containerId==='experience-section' ? 'add-experience' : 'add-education';
   const addBtn = document.getElementById(addBtnId);
   container.insertBefore(div, addBtn);
+
   updatePreview();
 }
 
-// Add buttons
+// Buttons
 document.getElementById('add-experience').addEventListener('click',()=>addEntry('experience-section',`
   <input type="text" class="job-title" placeholder="Job Title">
   <input type="text" class="employer" placeholder="Employer">
@@ -306,6 +322,7 @@ document.getElementById('add-experience').addEventListener('click',()=>addEntry(
   <textarea class="description" rows="3" placeholder="Description or bullet points..."></textarea>
   <button class="delete-btn">X</button>
 `));
+
 document.getElementById('add-education').addEventListener('click',()=>addEntry('education-section',`
   <input type="text" class="degree" placeholder="Degree / Certification">
   <input type="text" class="school" placeholder="School / Institution">
@@ -316,33 +333,42 @@ document.getElementById('add-education').addEventListener('click',()=>addEntry('
   <button class="delete-btn">X</button>
 `));
 
+// Initial skill & cert input
 function addSkillOrCert(containerId, className, placeholder){
   const container=document.getElementById(containerId);
   const div=document.createElement('div'); div.className='entry';
-  div.innerHTML=`<textarea class="${className}" rows="2" placeholder="${placeholder}"></textarea>`;
-  div.querySelector('textarea').addEventListener('input', updatePreview);
+  div.innerHTML=`<textarea class="${className}" rows="2" placeholder="${placeholder}"></textarea>
+  <button class="delete-btn">X</button>`;
+  div.querySelector('.delete-btn').addEventListener('click',()=>{ div.remove(); updatePreview(); });
+  div.querySelector('textarea').addEventListener('input',updatePreview);
   container.appendChild(div);
 }
-addSkillOrCert('skills-section','skill-text','Skill or list, comma separated');
-addSkillOrCert('cert-section','cert-name','Certification');
+addSkillOrCert('skills-section','skill-text','Skill...');
+addSkillOrCert('cert-section','cert-name','Certification...');
 
-document.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input', updatePreview));
-document.getElementById('theme').addEventListener('change', updatePreview);
-document.getElementById('fontFamily').addEventListener('change', updatePreview);
-document.getElementById('fontSize').addEventListener('change', updatePreview);
-document.getElementById('specialty').addEventListener('change',()=>{ const val=document.getElementById('specialty').value; if(specialties[val]) document.getElementById('summary').value=specialties[val]; updatePreview(); });
-document.querySelectorAll('#atsKeywords span').forEach(span=>span.addEventListener('click',()=>{ const txt=span.textContent; const sum=document.getElementById('summary'); sum.value+=sum.value?' ':' '+txt; updatePreview(); }));
-
-document.getElementById('downloadBtn').addEventListener('click',()=>{
-  const element=document.getElementById('resumePreview');
-  html2pdf().set({margin:0,filename:'resume.pdf',html2canvas:{scale:2},jsPDF:{unit:'in',format:'letter',orientation:'portrait'}}).from(element).save();
+// Theme, font, specialty
+['theme','fontFamily','fontSize'].forEach(id=>document.getElementById(id).addEventListener('change',updatePreview));
+document.getElementById('summary').addEventListener('input',updatePreview);
+document.getElementById('name').addEventListener('input',updatePreview);
+document.getElementById('title').addEventListener('input',updatePreview);
+document.getElementById('phone').addEventListener('input',updatePreview);
+document.getElementById('email').addEventListener('input',updatePreview);
+document.getElementById('specialty').addEventListener('change',function(){
+  const val=this.value;
+  if(val) document.getElementById('summary').value=specialties[val];
+  updatePreview();
 });
 
-document.getElementById('resetBtn').addEventListener('click',()=>{ document.getElementById('protectedContent').querySelectorAll('input,textarea').forEach(e=>e.value=''); updatePreview(); });
+// PDF
+document.getElementById('downloadBtn').addEventListener('click',()=>{
+  const element=document.getElementById('resumePreview');
+  html2pdf().set({margin:0.2,filename:'Resume.pdf',html2canvas:{scale:2}}).from(element).save();
+});
+
+// Reset
+document.getElementById('resetBtn').addEventListener('click',()=>location.reload());
 
 updatePreview();
-</script>
-`);
 }
 </script>
 </body>
