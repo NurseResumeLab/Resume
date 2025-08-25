@@ -63,8 +63,8 @@
   #atsKeywords span.used{ background:#22c55e1a; color:#166534; border-color:#bbf7d0; }
   #atsKeywords span.selected{ background:#dbeafe; color:#1e40af; border-color:#93c5fd; }
 
-  .resume-preview{ background:#fff; width:8.5in; margin:0; box-sizing:border-box; font-family:"Times New Roman", Times, serif; font-size:12pt; line-height:1.4; color:#000; -webkit-print-color-adjust:exact; print-color-adjust:exact; transform-origin:top left; }
-  .resume-content{ padding:0.5in; }
+  .resume-preview{ --accent:#0b3d91; --accent-rail:#e9efff; width:8.5in; margin:0; box-sizing:border-box; font-family:"Times New Roman", Times, serif; font-size:12pt; line-height:1.4; color:#000; background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; transform-origin:top left; }
+  .resume-content{ padding:0.5in; position:relative; }
   .header-info{ margin-bottom:10px; border-bottom:2px solid #333; padding-bottom:5px; }
   .header-name{ font-weight:700; font-size:16pt; margin:0 0 2px; }
   .contact-info{ margin-bottom:3px; }
@@ -91,7 +91,7 @@
   .resume-preview.layout-centered .contact-info{ display:inline-block; margin:0 8px 6px; }
   .resume-preview.layout-centered .section-title{ border-bottom-width:2px; }
 
-  /* NEW: Sidebar layout now supports dynamic ordering via classes, not hard-coded ids */
+  /* Sidebar layout (base) */
   .resume-preview.layout-sidebar .resume-content{
     display:grid; grid-template-columns:2fr 1fr; column-gap:24px; row-gap:8px; grid-auto-flow:row dense;
   }
@@ -131,6 +131,58 @@
   .section-fields input{ font-size:13px; padding:8px 10px; }
   .section-item.dragging{ opacity:.6; }
 
+  /* ===================== */
+  /*    TEMPLATE STYLES    */
+  /* ===================== */
+
+  /* A) NICU Left Sidebar (like image 1) */
+  .resume-preview.template-nicu .resume-content{ display:grid; grid-template-columns: 2.4in 1fr; column-gap:0.35in; padding:0; }
+  .resume-preview.template-nicu .resume-content::before{ content:""; position:absolute; inset:0 auto 0 0; width:2.4in; background:var(--accent-rail); }
+  .resume-preview.template-nicu .resume-content > *{ position:relative; }
+  .resume-preview.template-nicu .header-info{ grid-column:1; border:none; color:#0b1222; padding:0.45in 0.35in 0.2in; }
+  .resume-preview.template-nicu .header-name{ font-size:20pt; letter-spacing:.5px; }
+  .resume-preview.template-nicu .contact-info{ color:#1f2937; }
+  .resume-preview.template-nicu #educationSection,
+  .resume-preview.template-nicu #skillsSection,
+  .resume-preview.template-nicu #certsSection{ grid-column:1; padding:0 0.35in 0.2in; }
+  .resume-preview.template-nicu #summarySection,
+  .resume-preview.template-nicu #experienceSection{ grid-column:2; padding:0.5in 0.5in 0.45in 0.1in; }
+  .resume-preview.template-nicu #educationSection .section-title,
+  .resume-preview.template-nicu #skillsSection .section-title,
+  .resume-preview.template-nicu #certsSection .section-title{ border-bottom-color:rgba(0,0,0,.15); color:#0f172a; }
+  .resume-preview.template-nicu #summarySection .section-title,
+  .resume-preview.template-nicu #experienceSection .section-title{ color:var(--accent); }
+
+  /* B) Banner Header (like image 2) */
+  .resume-preview.template-banner .resume-content{ display:grid; grid-template-columns: 1.6fr 1fr; column-gap:0.35in; }
+  .resume-preview.template-banner .header-info{ grid-column:1/-1; background:var(--accent); color:#fff; border:none; padding:0.35in 0.45in; border-radius:8px; }
+  .resume-preview.template-banner .header-name{ font-size:22pt; letter-spacing:.6px; }
+  .resume-preview.template-banner .contact-info{ color:#e5edff; }
+  .resume-preview.template-banner #summarySection{ grid-column:1/-1; }
+  .resume-preview.template-banner #experienceSection{ grid-column:1; }
+  .resume-preview.template-banner #educationSection,
+  .resume-preview.template-banner #skillsSection,
+  .resume-preview.template-banner #certsSection{ grid-column:2; }
+  .resume-preview.template-banner .section-title{ border-bottom-color:#e5e7eb; }
+
+  /* C) Projects Spotlight (like image 3) */
+  .resume-preview.template-projects .resume-content{ padding:0.45in; }
+  .resume-preview.template-projects .header-info{ border-bottom-color:var(--accent); }
+  .resume-preview.template-projects .section-title{ border-bottom:none; border-left:4px solid var(--accent); padding-left:10px; text-transform:none; letter-spacing:.3px; }
+
+  /* D) Emerald Sidebar Header (like image 4) */
+  .resume-preview.template-emerald .resume-content{ display:grid; grid-template-columns: 2in 1fr; column-gap:0.35in; }
+  .resume-preview.template-emerald .header-info{ grid-column:1/-1; background:var(--accent); color:#fff; border:none; padding:0.35in 0.45in; border-radius:8px; }
+  .resume-preview.template-emerald .contact-info{ color:#e6fffb; }
+  .resume-preview.template-emerald #educationSection,
+  .resume-preview.template-emerald #skillsSection,
+  .resume-preview.template-emerald #certsSection{ grid-column:1; }
+  .resume-preview.template-emerald #summarySection,
+  .resume-preview.template-emerald #experienceSection{ grid-column:2; }
+  .resume-preview.template-emerald #educationSection .section-title,
+  .resume-preview.template-emerald #skillsSection .section-title,
+  .resume-preview.template-emerald #certsSection .section-title{ color:var(--accent); }
+
   /* Footer */
   .site-footer{ text-align:center; padding:16px; color:var(--muted); font-size:12px; border-top:1px solid var(--border);
     background:var(--panel); }
@@ -166,13 +218,22 @@
         <label>ATS Keywords <span class="subtle">(click to add to Skills)</span></label>
         <div id="atsKeywords" title="Click a keyword to add it to your Skills. It will highlight green when used."></div>
 
+        <label for="templatePreset">Template</label>
+        <select id="templatePreset">
+          <option value="none">Default (use Layout below)</option>
+          <option value="nicu">Left Color Panel Accent</option>
+          <option value="projects">Simple Titles</option>
+          <option value="banner">Banner Header (w/ right sidebar)</option>
+          <option value="emerald">Banner Header (w/ left sidebar)</option>
+        </select>
+
         <label for="theme">Select Color</label>
         <select id="theme">
           <option value="classic">Classic (Navy)</option><option value="modern">Modern (Slate)</option>
           <option value="elegant">Elegant (Burgundy)</option><option value="minimal">Minimal (Charcoal)</option>
           <option value="royal">Royal (Indigo)</option><option value="plum">Plum (Deep Purple)</option>
           <option value="gold">Gold (Muted Ochre)</option><option value="copper">Copper (Burnt Orange)</option>
-          <option value="azure">Azure (Clean Blue)</option>
+          <option value="azure">Azure (Clean Blue)</option><option value="emerald">Emerald (Teal)</option>
         </select>
 
         <label for="layout">Layout Style</label>
@@ -349,7 +410,7 @@ if (userInput === password) {
 
   const themeColors = {
     classic:'#0b3d91', modern:'#6c757d', elegant:'#800020', minimal:'#333333',
-    royal:'#3b3b98', plum:'#4c1d95', gold:'#8b6b22', copper:'#b45309', azure:'#2563eb'
+    royal:'#3b3b98', plum:'#4c1d95', gold:'#8b6b22', copper:'#b45309', azure:'#2563eb', emerald:'#0f766e'
   };
 
   const specialties = {
@@ -392,7 +453,7 @@ if (userInput === password) {
     atsContainer.appendChild(span);
   });
 
-  function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+  function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\$&'); }
   function formatDate(dateStr){
     if (!dateStr) return '';
     if (String(dateStr).toLowerCase() === 'present') return 'Present';
@@ -510,8 +571,6 @@ if (userInput === password) {
   function applySectionOrder(){
     // Reorder preview DOM by current sectionOrder
     const content = document.querySelector('#resumePreview .resume-content');
-    // Keep header-info first
-    const header = content.querySelector('.header-info');
     sectionOrder.forEach(id=>{
       const node = byId(sectionsMeta[id].nodeId);
       if(node) content.appendChild(node);
@@ -537,7 +596,7 @@ if (userInput === password) {
         }
       });
     }else{
-      // Clear grid placements for non-sidebar layouts
+      // Clear grid placements for non-sidebar layouts (templates handle their own)
       Object.values(sectionsMeta).forEach(meta=>{
         const el = byId(meta.nodeId);
         if(el){ el.style.gridColumn=''; el.style.gridRow=''; }
@@ -590,11 +649,12 @@ if (userInput === password) {
   }
 
   /* ===== Auto-save / restore ===== */
-  const STORAGE_KEY = 'resumeBuilderState_v6'; // bump version for new features
+  const STORAGE_KEY = 'resumeBuilderState_v7'; // bump version for template pack
   function saveState(){
     const state = {
       name:val('name'), title:val('title'), phone:val('phone'), email:val('email'),
       theme:val('theme'), layout:val('layout'), fontFamily:val('fontFamily'), fontSize:val('fontSize'),
+      template:val('templatePreset'),
       specialty:val('specialty'), summary:val('summary'),
       breaks:{ exp:checked('pbBeforeExperience'), edu:checked('pbBeforeEducation'), skl:checked('pbBeforeSkills'),
         fit:fitToggle.checked, guides:guideToggle.checked },
@@ -630,6 +690,7 @@ if (userInput === password) {
       const s = JSON.parse(raw);
       setVal('name',s.name); setVal('title',s.title); setVal('phone',s.phone); setVal('email',s.email);
       setVal('theme',s.theme); setVal('layout',s.layout); setVal('fontFamily',s.fontFamily); setVal('fontSize',s.fontSize);
+      setVal('templatePreset', s.template || 'none');
       setVal('specialty',s.specialty); setVal('summary',s.summary);
 
       (s.experience||[]).forEach(it=>{
@@ -696,17 +757,30 @@ if (userInput === password) {
     byId('prevPhone').textContent=phone;
     byId('prevEmail').textContent=email;
 
+    // theme accents
+    const resumeEl = byId('resumePreview');
+    setAccentVars(resumeEl, themeColors[theme]);
+
     document.querySelector('.header-info').style.borderBottomColor = themeColors[theme];
     document.querySelectorAll('.section-title').forEach(el=>el.style.color = themeColors[theme]);
 
-    const resumeEl = byId('resumePreview');
     resumeEl.style.fontFamily = val('fontFamily');
     resumeEl.style.fontSize = val('fontSize');
 
+    // BASE layout classes
     const layout = val('layout') || 'classic';
     const layoutClasses = ['layout-classic','layout-compact','layout-sidebar','layout-timeline','layout-centered'];
     resumeEl.classList.remove(...layoutClasses);
     resumeEl.classList.add(`layout-${layout}`);
+
+    // Template classes (mutually exclusive)
+    const tpl = val('templatePreset');
+    const tplClasses = ['template-nicu','template-banner','template-projects','template-emerald'];
+    resumeEl.classList.remove(...tplClasses);
+    if(tpl==='nicu') resumeEl.classList.add('template-nicu');
+    else if(tpl==='banner') resumeEl.classList.add('template-banner');
+    else if(tpl==='projects') resumeEl.classList.add('template-projects');
+    else if(tpl==='emerald') resumeEl.classList.add('template-emerald');
 
     byId('prevSummary').innerHTML = (val('summary')||'').replace(/\n/g,'<br>');
 
@@ -782,6 +856,18 @@ if (userInput === password) {
     applyManualBreaks();
     fitPreview();
     saveState();
+  }
+
+  function setAccentVars(el, baseHex){
+    el.style.setProperty('--accent', baseHex);
+    el.style.setProperty('--accent-rail', lightenHex(baseHex, 0.82)); // light tint for rails/banners
+  }
+  function lightenHex(hex, amt){
+    hex = hex.replace('#','');
+    if(hex.length===3){ hex = hex.split('').map(c=>c+c).join(''); }
+    const r = parseInt(hex.substr(0,2),16), g=parseInt(hex.substr(2,2),16), b=parseInt(hex.substr(4,2),16);
+    const lr = Math.round(r + (255 - r) * amt), lg = Math.round(g + (255 - g) * amt), lb = Math.round(b + (255 - b) * amt);
+    return '#'+[lr,lg,lb].map(n=>n.toString(16).padStart(2,'0')).join('');
   }
 
   /* ===== Focus-aware insertion: add below current card ===== */
@@ -901,7 +987,7 @@ if (userInput === password) {
   addSkillOrCert('skills-section','skill-text','Skill...');
   addSkillOrCert('cert-section','cert-name','Certification...');
 
-  ['theme','fontFamily','fontSize','layout'].forEach(id=>{
+  ['theme','fontFamily','fontSize','layout','templatePreset'].forEach(id=>{
     byId(id).addEventListener('change',()=>{ updatePreview(); });
     byId(id).addEventListener('input',()=>{ updatePreview(); });
   });
@@ -940,6 +1026,7 @@ if (userInput === password) {
     const inst = document.getElementById('instructionBox'); inst?.classList.remove('hidden');
 
     ['name','title','phone','email','summary','specialty'].forEach(id=>{ const el=byId(id); if(el){ el.value = ''; }});
+    setVal('templatePreset','none');
     setVal('theme','classic'); setVal('layout','classic'); setVal('fontFamily','Roboto, sans-serif'); setVal('fontSize','12pt');
     document.querySelectorAll('#experience-section .entry, #education-section .entry, #skills-section .entry, #cert-section .entry').forEach(n=>n.remove());
     addSkillOrCert('skills-section','skill-text','Skill...');
