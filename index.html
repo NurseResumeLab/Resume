@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<title>Resume Builder</title>
+<title>Resume Builder – Auto-Flow Templates</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
 <style>
   :root{
@@ -18,7 +18,7 @@
   .topbar .title{ font-weight:700; font-size:18px; }
   .app{ max-width:1400px; margin:12px auto 32px; padding:0 16px; }
 
-  /* Instruction box */
+  /* Instruction */
   .instruction{ background:#f8faff; border:1px solid var(--border); border-left:4px solid var(--primary);
     border-radius:12px; padding:12px; margin:8px 0 16px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
   .instruction .instruction-title{ font-weight:700; margin-bottom:6px; }
@@ -63,12 +63,13 @@
   #atsKeywords span.used{ background:#22c55e1a; color:#166534; border-color:#bbf7d0; }
   #atsKeywords span.selected{ background:#dbeafe; color:#1e40af; border-color:#93c5fd; }
 
+  /* ===== Resume page ===== */
   .resume-preview{ --accent:#0b3d91; --accent-rail:#e9efff; width:8.5in; margin:0; box-sizing:border-box; font-family:"Times New Roman", Times, serif; font-size:12pt; line-height:1.4; color:#000; background:#fff; -webkit-print-color-adjust:exact; print-color-adjust:exact; transform-origin:top left; }
   .resume-content{ padding:0.5in; position:relative; }
-  .header-info{ margin-bottom:10px; border-bottom:2px solid #333; padding-bottom:5px; }
+  .header-info{ margin:0 0 10px 0; border-bottom:2px solid #333; padding:0 0 5px 0; }
   .header-name{ font-weight:700; font-size:16pt; margin:0 0 2px; }
   .contact-info{ margin-bottom:3px; }
-  .section-title{ font-weight:700; margin:14px 0 2px; text-transform:uppercase; color:#333; border-bottom:1px solid #ccc; padding-bottom:2px; page-break-inside:avoid; break-inside:avoid; }
+  .section-title{ font-weight:700; margin:12px 0 4px; text-transform:uppercase; color:#333; border-bottom:1px solid #ccc; padding-bottom:2px; page-break-inside:avoid; break-inside:avoid; }
   .section-desc{ font-style:italic; color:#555; margin: 2px 0 6px; }
   .entry{ margin-bottom:10px; position:relative; padding-right:30px; }
   .entry-title{ font-weight:700; }
@@ -76,10 +77,10 @@
   .entry-description{ margin-left:15px; }
   .delete-btn{ position:absolute; right:0; top:0; background:#ef4444; color:#fff; border:none; padding:0 8px; line-height:22px; height:22px; cursor:pointer; border-radius:6px; }
 
-  /* Ensure bullets always show */
   .resume-preview ul.entry-description{ list-style:disc; padding-left:1.1em; margin:0.25em 0 0.5em; }
   .resume-preview ul.entry-description li{ list-style:disc; }
 
+  /* Base layout helpers (still available if Template=None) */
   .resume-preview.layout-compact .resume-content{ padding:0.4in; }
   .resume-preview.layout-compact .section-title{ margin-top:10px; margin-bottom:4px; border-bottom-color:#bbb; }
   .resume-preview.layout-compact .entry{ margin-bottom:6px; padding-right:24px; }
@@ -91,10 +92,7 @@
   .resume-preview.layout-centered .contact-info{ display:inline-block; margin:0 8px 6px; }
   .resume-preview.layout-centered .section-title{ border-bottom-width:2px; }
 
-  /* Sidebar layout (base) */
-  .resume-preview.layout-sidebar .resume-content{
-    display:grid; grid-template-columns:2fr 1fr; column-gap:24px; row-gap:8px; grid-auto-flow:row dense;
-  }
+  .resume-preview.layout-sidebar .resume-content{ display:grid; grid-template-columns:2fr 1fr; column-gap:24px; row-gap:8px; grid-auto-flow:row dense; }
   .resume-preview.layout-sidebar .resume-content > .header-info{ grid-column:1/-1; }
   .resume-preview.layout-sidebar .resume-content > .resume-section{ grid-column:1; }
   .resume-preview.layout-sidebar .resume-content > .resume-section.right-col{ grid-column:2; }
@@ -104,7 +102,6 @@
   .resume-preview.layout-timeline .entry-details{ grid-column:2; text-align:right; margin-bottom:0; }
   .resume-preview.layout-timeline .entry-description{ grid-column:1/-1; margin-left:0; }
   .resume-preview.layout-timeline .section-title{ border-bottom-width:2px; }
-
   .resume-preview.layout-classic .section-title{ border-bottom-width:1px; }
 
   .resume-preview .section-title{ break-after:avoid; page-break-after:avoid; }
@@ -122,7 +119,6 @@
   .print-controls__group label{ display:inline-flex; align-items:center; gap:8px; white-space:nowrap; }
   .print-controls input[type="checkbox"]{ width:18px; height:18px; }
 
-  /* NEW: Sections Manager (drag & drop) */
   .sections-manager{ border:1px solid var(--border); background:#fafbff; border-radius:10px; padding:8px; margin-top:10px; }
   .section-item{ display:flex; gap:10px; align-items:flex-start; background:#fff; border:1px solid var(--border); border-radius:10px; padding:8px; margin-bottom:8px; }
   .section-item:last-child{ margin-bottom:0; }
@@ -132,62 +128,101 @@
   .section-item.dragging{ opacity:.6; }
 
   /* ===================== */
-  /*    TEMPLATE STYLES    */
+  /*   TEMPLATE STYLES    */
   /* ===================== */
 
-  /* A) NICU Left Sidebar (like image 1) */
-  .resume-preview.template-nicu .resume-content{ display:grid; grid-template-columns: 2.4in 1fr; column-gap:0.35in; padding:0; }
-  .resume-preview.template-nicu .resume-content::before{ content:""; position:absolute; inset:0 auto 0 0; width:2.4in; background:var(--accent-rail); }
+  /* Common tweaks for template headings aligning at top rows */
+  .resume-preview[class*="template-"] .section-title{ margin-top:0; }
+  .resume-preview[class*="template-"] .header-info{ margin:0; }
+
+  /* (A) NICU – left colored rail using areas = header | summary ; then left stack and right experience */
+  .resume-preview.template-nicu .resume-content{
+    --rail:2.6in;
+    display:grid;
+    grid-template-columns: var(--rail) 1fr;
+    grid-template-rows: auto;
+    grid-template-areas:
+      "header   summary"
+      "education experience"
+      "skills    experience"
+      "certs     experience";
+    column-gap:0.35in; row-gap:0.25in; padding:0; position:relative;
+  }
+  .resume-preview.template-nicu .resume-content::before{
+    content:""; position:absolute; inset:0 auto 0 0; width:var(--rail); background:var(--accent-rail);
+  }
   .resume-preview.template-nicu .resume-content > *{ position:relative; }
-  .resume-preview.template-nicu .header-info{ grid-column:1; border:none; color:#0b1222; padding:0.45in 0.35in 0.2in; }
-  .resume-preview.template-nicu .header-name{ font-size:20pt; letter-spacing:.5px; }
-  .resume-preview.template-nicu .contact-info{ color:#1f2937; }
-  .resume-preview.template-nicu #educationSection,
-  .resume-preview.template-nicu #skillsSection,
-  .resume-preview.template-nicu #certsSection{ grid-column:1; padding:0 0.35in 0.2in; }
-  .resume-preview.template-nicu #summarySection,
-  .resume-preview.template-nicu #experienceSection{ grid-column:2; padding:0.5in 0.5in 0.45in 0.1in; }
-  .resume-preview.template-nicu #educationSection .section-title,
-  .resume-preview.template-nicu #skillsSection .section-title,
-  .resume-preview.template-nicu #certsSection .section-title{ border-bottom-color:rgba(0,0,0,.15); color:#0f172a; }
+  .resume-preview.template-nicu .header-info{ grid-area:header; border:none; padding:0.45in 0.35in 0.25in; color:#0b1222; }
+  /* Long contacts wrap safely inside the rail */
+  .resume-preview.template-nicu .header-info .contact-info{ overflow-wrap:anywhere; word-break:break-word; line-height:1.25; }
+  .resume-preview.template-nicu #summarySection{ grid-area:summary; padding:0.45in 0.5in 0.25in 0.1in; }
+  .resume-preview.template-nicu #experienceSection{ grid-area:experience; padding:0 0.5in 0.45in 0.1in; }
+  .resume-preview.template-nicu #educationSection{ grid-area:education; padding:0 0.35in 0 0.35in; }
+  .resume-preview.template-nicu #skillsSection{ grid-area:skills; padding:0 0.35in 0 0.35in; }
+  .resume-preview.template-nicu #certsSection{ grid-area:certs; padding:0 0.35in 0.45in 0.35in; }
   .resume-preview.template-nicu #summarySection .section-title,
   .resume-preview.template-nicu #experienceSection .section-title{ color:var(--accent); }
 
-  /* B) Banner Header (like image 2) */
-  .resume-preview.template-banner .resume-content{ display:grid; grid-template-columns: 1.6fr 1fr; column-gap:0.35in; }
-  .resume-preview.template-banner .header-info{ grid-column:1/-1; background:var(--accent); color:#fff; border:none; padding:0.35in 0.45in; border-radius:8px; }
-  .resume-preview.template-banner .header-name{ font-size:22pt; letter-spacing:.6px; }
+  /* (B) Banner header + RIGHT sidebar
+     Areas: header full; then (experience | education), then (experience | skills), then (experience | certs) */
+  .resume-preview.template-banner .resume-content{
+    display:grid;
+    grid-template-columns: 1.6fr 1fr;
+    grid-template-areas:
+      "header     header"
+      "experience education"
+      "experience skills"
+      "experience certs";
+    column-gap:0.35in; row-gap:0.25in;
+  }
+  .resume-preview.template-banner .header-info{
+    grid-area:header; background:var(--accent); color:#fff; border:none; padding:0.35in 0.45in; border-radius:8px;
+  }
   .resume-preview.template-banner .contact-info{ color:#e5edff; }
-  .resume-preview.template-banner #summarySection{ grid-column:1/-1; }
-  .resume-preview.template-banner #experienceSection{ grid-column:1; }
-  .resume-preview.template-banner #educationSection,
-  .resume-preview.template-banner #skillsSection,
-  .resume-preview.template-banner #certsSection{ grid-column:2; }
+  .resume-preview.template-banner #experienceSection{ grid-area:experience; }
+  .resume-preview.template-banner #educationSection{ grid-area:education; }
+  .resume-preview.template-banner #skillsSection{ grid-area:skills; }
+  .resume-preview.template-banner #certsSection{ grid-area:certs; }
   .resume-preview.template-banner .section-title{ border-bottom-color:#e5e7eb; }
 
-  /* C) Projects Spotlight (like image 3) */
+  /* (C) Projects accent (unchanged) */
   .resume-preview.template-projects .resume-content{ padding:0.45in; }
   .resume-preview.template-projects .header-info{ border-bottom-color:var(--accent); }
   .resume-preview.template-projects .section-title{ border-bottom:none; border-left:4px solid var(--accent); padding-left:10px; text-transform:none; letter-spacing:.3px; }
 
-  /* D) Emerald Sidebar Header (like image 4) */
-  .resume-preview.template-emerald .resume-content{ display:grid; grid-template-columns: 2in 1fr; column-gap:0.35in; }
-  .resume-preview.template-emerald .header-info{ grid-column:1/-1; background:var(--accent); color:#fff; border:none; padding:0.35in 0.45in; border-radius:8px; }
+  /* (D) Banner header + LEFT sidebar
+     Areas: header full; then (education | summary), then (skills | experience), then (certs | experience) */
+  .resume-preview.template-emerald .resume-content{
+    display:grid;
+    grid-template-columns: 2.0in 1fr;
+    grid-template-areas:
+      "header     header"
+      "education  summary"
+      "skills     experience"
+      "certs      experience";
+    column-gap:0.35in; row-gap:0.25in;
+  }
+  .resume-preview.template-emerald .header-info{
+    grid-area:header; background:var(--accent); color:#fff; border:none; padding:0.35in 0.45in; border-radius:8px;
+  }
   .resume-preview.template-emerald .contact-info{ color:#e6fffb; }
-  .resume-preview.template-emerald #educationSection,
-  .resume-preview.template-emerald #skillsSection,
-  .resume-preview.template-emerald #certsSection{ grid-column:1; }
-  .resume-preview.template-emerald #summarySection,
-  .resume-preview.template-emerald #experienceSection{ grid-column:2; }
+  .resume-preview.template-emerald #educationSection{ grid-area:education; }
+  .resume-preview.template-emerald #skillsSection{ grid-area:skills; }
+  .resume-preview.template-emerald #certsSection{ grid-area:certs; }
+  .resume-preview.template-emerald #summarySection{ grid-area:summary; }
+  .resume-preview.template-emerald #experienceSection{ grid-area:experience; }
   .resume-preview.template-emerald #educationSection .section-title,
   .resume-preview.template-emerald #skillsSection .section-title,
-  .resume-preview.template-emerald #certsSection .section-title{ color:var(--accent); }
+  .resume-preview.template-emerald #certsSection .section-title{ color:#fff; border-bottom-color:#ffffff66; }
 
   /* Footer */
-  .site-footer{ text-align:center; padding:16px; color:var(--muted); font-size:12px; border-top:1px solid var(--border);
-    background:var(--panel); }
+  .site-footer{ text-align:center; padding:16px; color:var(--muted); font-size:12px; border-top:1px solid var(--border); background:var(--panel); }
 
-  @media (max-width:1200px){ .container{ gap:12px; } .preview-section{ flex-basis:100%; min-width:0; } #resumePreview{ margin:0 auto; } }
+  @media (max-width:1200px){
+    .container{ gap:12px; }
+    .preview-section{ flex-basis:100%; min-width:0; }
+    #resumePreview{ margin:0 auto; }
+  }
 </style>
 </head>
 <body>
@@ -198,17 +233,16 @@
   <div class="topbar"><span class="title">Resume Builder</span></div>
   <div class="app">
 
-    <!-- Instruction Box -->
-    <div id="instructionBox" class="instruction" role="note" aria-label="How to use Resume Builder">
+    <div id="instructionBox" class="instruction" role="note">
       <div class="instruction-title">Quick tips</div>
       <ul>
-        <li>Your work auto-saves to your browser via <strong>Local Storage</strong>. You can reset anytime.</li>
-        <li>Sections are <strong>moveable</strong>: use the <em>↕ drag handle</em> in “Sections (Titles, Descriptions &amp; Order)”.</li>
-        <li>Section <strong>titles are changeable</strong>: edit them in the left panel; changes reflect in the preview.</li>
+        <li>Auto-saves to Local Storage.</li>
+        <li>Use the <b>Template</b> dropdown for NICU / Banner layouts with automatic reflow.</li>
+        <li>Sections can be reordered in “Sections (Titles, Descriptions & Order)”.</li>
       </ul>
       <div class="actions">
         <button id="dismissInstructions" class="btn btn-ghost" type="button">Got it</button>
-        <span class="small">You can show this again by pressing Reset.</span>
+        <span class="small">Reset to show this again.</span>
       </div>
     </div>
 
@@ -216,15 +250,15 @@
       <!-- LEFT: Form -->
       <div class="form-section" aria-label="Resume Form">
         <label>ATS Keywords <span class="subtle">(click to add to Skills)</span></label>
-        <div id="atsKeywords" title="Click a keyword to add it to your Skills. It will highlight green when used."></div>
+        <div id="atsKeywords"></div>
 
         <label for="templatePreset">Template</label>
         <select id="templatePreset">
           <option value="none">Default (use Layout below)</option>
-          <option value="nicu">Left Color Panel Accent</option>
-          <option value="projects">Simple Titles</option>
-          <option value="banner">Banner Header (w/ right sidebar)</option>
-          <option value="emerald">Banner Header (w/ left sidebar)</option>
+          <option value="nicu">Left Accent Color Bar</option>
+          <option value="projects">Simple + Color Accent</option>
+          <option value="banner">Banner Header + Right Sidebar</option>
+          <option value="emerald">Banner Header + Left Sidebar</option>
         </select>
 
         <label for="theme">Select Color</label>
@@ -284,14 +318,14 @@
           <option value="leadership">Nurse Leadership</option>
           <option value="newgrad">New Graduate Nurse</option>
         </select>
-        <textarea id="summary" rows="5" placeholder="Concise 3-4 lines that showcase your value, scope (units/settings), and key strengths."></textarea>
+        <textarea id="summary" rows="5" placeholder="Concise 3-4 lines that showcase your value."></textarea>
 
         <div id="experience-section">
           <div class="field-header">
             <label>Experience Entries</label>
             <button type="button" id="add-experience" class="btn btn-primary">Add Experience</button>
           </div>
-          <div class="subtle">Tip: Use bullets and start with strong verbs. Quantify where possible.</div>
+          <div class="subtle">Tip: bullets, strong verbs, quantify.</div>
         </div>
 
         <div id="education-section">
@@ -306,7 +340,7 @@
             <label>Skills</label>
             <button type="button" id="add-skill" class="btn btn-primary">Add Skill</button>
           </div>
-          <div class="subtle">Use line breaks for bullets (commas are ignored).</div>
+          <div class="subtle">One skill per line.</div>
         </div>
 
         <div id="cert-section">
@@ -317,16 +351,13 @@
           <div class="subtle">e.g., BLS, ACLS, PALS, CCRN, TNCC, NIHSS.</div>
         </div>
 
-        <!-- NEW: Sections manager -->
         <div id="sections-settings">
-          <div class="field-header">
-            <label>Sections (Titles, Descriptions & Order)</label>
-          </div>
-          <div class="subtle">Drag ↕ to reorder sections. Titles and descriptions appear in the preview.</div>
+          <div class="field-header"><label>Sections (Titles, Descriptions & Order)</label></div>
+          <div class="subtle">Drag ↕ to reorder. Titles & descriptions reflect in preview.</div>
           <div class="sections-manager" id="sectionsManager"></div>
         </div>
 
-        <div class="view-controls" role="group" aria-label="View Controls">
+        <div class="view-controls" role="group">
           <label class="switch"><input type="checkbox" id="fitToggle" checked /> Fit to screen</label>
           <label class="switch"><input type="checkbox" id="guideToggle" checked /> Show break guides</label>
         </div>
@@ -357,7 +388,6 @@
               <div class="contact-info" id="prevEmail">Email</div>
             </div>
 
-            <!-- Tag each section wrapper and add .resume-section (skills/certs default to right column in sidebar) -->
             <div id="summarySection" class="resume-section" data-section-id="summary">
               <div class="section-title" data-default-title="Professional Summary">Professional Summary</div>
               <div class="section-desc" id="desc-summary" style="display:none;"></div>
@@ -390,7 +420,6 @@
     </div><!-- /container -->
   </div><!-- /app -->
 
-  <!-- Footer -->
   <footer class="site-footer">Nurse Resume Lab 2025. All Rights Reserved.</footer>
 </div><!-- /protected -->
 
@@ -422,19 +451,59 @@ if (userInput === password) {
     newgrad:`Recent nursing graduate with strong academic foundation and clinical experience. Skilled in patient care, documentation, and eager to contribute to a dynamic healthcare team while continuing professional development.`
   };
 
-  /* ---------- Instruction box behavior ---------- */
+/* ===== PDF Export (works with scaled preview) ===== */
+function exportPDF(){
+  const source = document.getElementById('resumePreview');
+  if (!source) return;
+
+  // clone at full size (no scale), render off-screen
+  const clone = source.cloneNode(true);
+  clone.id = 'resumePreviewCapture';
+  clone.style.margin = '0';
+  clone.style.boxShadow = 'none';
+  clone.style.transform = 'none';
+
+  // hide visual guides if they’re off in the UI
+  clone.querySelectorAll('.page-break').forEach(el=>{
+    if (el.classList.contains('hidden')) el.style.display = 'none';
+  });
+
+  const host = document.createElement('div');
+  host.id = 'captureHost';
+  host.style.position = 'fixed';
+  host.style.left = '0';
+  host.style.top = '0';
+  host.style.width = '8.5in';
+  host.style.background = '#fff';
+  host.style.zIndex = '2147483647';
+  host.style.padding = '0';
+  host.style.margin = '0';
+  host.appendChild(clone);
+  document.body.appendChild(host);
+
+  const opts = {
+    margin: 0,
+    filename: 'Resume.pdf',
+    image: { type: 'jpeg', quality: 0.98 },
+    pagebreak: { mode: ['css','legacy'] }, // honors .page-break etc.
+    html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
+    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+  };
+
+  html2pdf().set(opts).from(clone).save().finally(()=> host.remove());
+}
+
+document.getElementById('downloadBtn').addEventListener('click', exportPDF);
+
+
+  /* Instruction dismissal */
   const INSTRUCTIONS_KEY = 'resumeBuilderHideInstructions_v1';
   const instBox = document.getElementById('instructionBox');
   const dismissBtn = document.getElementById('dismissInstructions');
-  if (localStorage.getItem(INSTRUCTIONS_KEY) === '1') {
-    instBox?.classList.add('hidden');
-  }
-  dismissBtn?.addEventListener('click', ()=>{
-    instBox?.classList.add('hidden');
-    localStorage.setItem(INSTRUCTIONS_KEY,'1');
-  });
+  if (localStorage.getItem(INSTRUCTIONS_KEY) === '1') instBox?.classList.add('hidden');
+  dismissBtn?.addEventListener('click', ()=>{ instBox?.classList.add('hidden'); localStorage.setItem(INSTRUCTIONS_KEY,'1'); });
 
-  /* ---------- ATS chips ---------- */
+  /* ATS chips */
   const atsKeywordsList = ["Patient Care","Critical Thinking","Assessment","Communication","EMR","Team Collaboration","Medication Administration","ICU","ER","Leadership","Travel Nursing","New Graduate","Evidence-Based","Compassion","Quality Improvement"];
   const atsContainer = document.getElementById('atsKeywords');
   atsKeywordsList.forEach(word=>{
@@ -443,17 +512,14 @@ if (userInput === password) {
       const firstSkill = document.querySelector('#skills-section .entry .skill-text') || createDefaultSkillEntry();
       const val = firstSkill.value.trim();
       const exists = new RegExp(`(^|[\\n]\\s*)${escapeRegExp(word)}(\\s*([\\n]|$))`,'i').test(val);
-      if(!exists){
-        // add via newline, not commas
-        firstSkill.value = (val ? (val + (val.endsWith('\n') ? '' : '\n')) : '') + word;
-      }
+      if(!exists){ firstSkill.value = (val ? (val + (val.endsWith('\\n') ? '' : '\\n')) : '') + word; }
       span.classList.toggle('selected');
       updatePreview();
     });
     atsContainer.appendChild(span);
   });
 
-  function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\$&'); }
+  function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\\]\\\\]/g,'\\\\$&'); }
   function formatDate(dateStr){
     if (!dateStr) return '';
     if (String(dateStr).toLowerCase() === 'present') return 'Present';
@@ -465,7 +531,7 @@ if (userInput === password) {
     return document.querySelector('#skills-section .entry .skill-text');
   }
 
-  /* ===== NEW: Sections meta (titles, descriptions, order) ===== */
+  /* Sections meta */
   const sectionsMeta = {
     summary:   { id:'summary',   nodeId:'summarySection',   defaultTitle:'Professional Summary', right:false,  title:'', desc:'' },
     experience:{ id:'experience',nodeId:'experienceSection',defaultTitle:'Experience',           right:false,  title:'', desc:'' },
@@ -476,66 +542,39 @@ if (userInput === password) {
   let sectionOrder = ['summary','experience','education','skills','certs'];
 
   function buildSectionsManager(){
-    const manager = byId('sectionsManager');
-    manager.innerHTML = '';
+    const manager = byId('sectionsManager'); manager.innerHTML = '';
     sectionOrder.forEach(id=>{
       const meta = sectionsMeta[id];
       const item = document.createElement('div');
-      item.className = 'section-item';
-      item.draggable = true;
-      item.dataset.id = id;
+      item.className = 'section-item'; item.draggable = true; item.dataset.id = id;
       item.innerHTML = `
         <span class="drag-handle" title="Drag to reorder" aria-label="Drag">↕</span>
         <div class="section-fields">
           <input type="text" class="title-input" placeholder="${meta.defaultTitle}" value="${meta.title||''}">
           <input type="text" class="desc-input" placeholder="Optional description" value="${meta.desc||''}">
-        </div>
-      `;
-      // drag events
-      item.addEventListener('dragstart', e=>{
-        item.classList.add('dragging');
-        e.dataTransfer.effectAllowed = 'move';
-      });
+        </div>`;
+      item.addEventListener('dragstart', e=>{ item.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
       item.addEventListener('dragend', ()=>{
         item.classList.remove('dragging');
-        // read new order
-        const ids = Array.from(manager.querySelectorAll('.section-item')).map(x=>x.dataset.id);
-        sectionOrder = ids;
-        applySectionOrder();
-        saveState();
+        sectionOrder = Array.from(manager.querySelectorAll('.section-item')).map(x=>x.dataset.id);
+        applySectionOrder(); saveState();
       });
-      // inputs
-      item.querySelector('.title-input').addEventListener('input', (e)=>{
-        sectionsMeta[id].title = e.target.value;
-        applySectionTitles();
-        saveState();
-      });
-      item.querySelector('.desc-input').addEventListener('input', (e)=>{
-        sectionsMeta[id].desc = e.target.value;
-        applySectionDescriptions();
-        saveState();
-      });
+      item.querySelector('.title-input').addEventListener('input', (e)=>{ sectionsMeta[id].title = e.target.value; applySectionTitles(); saveState(); });
+      item.querySelector('.desc-input').addEventListener('input', (e)=>{ sectionsMeta[id].desc = e.target.value; applySectionDescriptions(); saveState(); });
       manager.appendChild(item);
     });
-
-    // container dragover to position placeholder
     manager.addEventListener('dragover', e=>{
       e.preventDefault();
-      const dragging = manager.querySelector('.dragging');
-      if(!dragging) return;
+      const dragging = manager.querySelector('.dragging'); if(!dragging) return;
       const after = getDragAfterElement(manager, e.clientY);
-      if(after == null) manager.appendChild(dragging);
-      else manager.insertBefore(dragging, after);
+      if(after == null) manager.appendChild(dragging); else manager.insertBefore(dragging, after);
     });
   }
-
   function getDragAfterElement(container, y){
     const els = [...container.querySelectorAll('.section-item:not(.dragging)')];
     return els.reduce((closest, child)=>{
-      const box = child.getBoundingClientRect();
-      const offset = y - box.top - box.height/2;
-      if(offset < 0 && offset > closest.offset) return { offset, element:child };
-      else return closest;
+      const box = child.getBoundingClientRect(); const offset = y - box.top - box.height/2;
+      if(offset < 0 && offset > closest.offset) return { offset, element:child }; else return closest;
     }, { offset: Number.NEGATIVE_INFINITY }).element;
   }
 
@@ -546,7 +585,6 @@ if (userInput === password) {
       const custom = (meta.title || '').trim();
       titleEl.textContent = custom || meta.defaultTitle;
     });
-    // keep titles colored to theme
     const theme = val('theme')||'classic';
     document.querySelector('.header-info').style.borderBottomColor = themeColors[theme];
     document.querySelectorAll('.section-title').forEach(el=>el.style.color = themeColors[theme]);
@@ -557,56 +595,22 @@ if (userInput === password) {
       const sec = byId(meta.nodeId);
       const descEl = sec.querySelector(`#desc-${meta.id}`);
       const text = (meta.desc || '').trim();
-      if(text){
-        descEl.style.display = '';
-        descEl.textContent = text;
-      } else {
-        descEl.style.display = 'none';
-        descEl.textContent = '';
-      }
+      if(text){ descEl.style.display = ''; descEl.textContent = text; }
+      else { descEl.style.display = 'none'; descEl.textContent = ''; }
     });
     fitPreview();
   }
 
   function applySectionOrder(){
-    // Reorder preview DOM by current sectionOrder
     const content = document.querySelector('#resumePreview .resume-content');
     sectionOrder.forEach(id=>{
       const node = byId(sectionsMeta[id].nodeId);
       if(node) content.appendChild(node);
     });
-
-    // Sidebar layout: place right-column sections (skills/certs) in column 2 with stable row order
-    const layout = val('layout') || 'classic';
-    if(layout === 'sidebar'){
-      let leftRow = 2;  // row 1 is header spanning both cols
-      let rightRow = 2;
-      sectionOrder.forEach(id=>{
-        const meta = sectionsMeta[id];
-        const el = byId(meta.nodeId);
-        if(!el) return;
-        if(meta.right){
-          el.classList.add('right-col');
-          el.style.gridColumn = '2';
-          el.style.gridRow = rightRow++;
-        }else{
-          el.classList.remove('right-col');
-          el.style.gridColumn = '1';
-          el.style.gridRow = leftRow++;
-        }
-      });
-    }else{
-      // Clear grid placements for non-sidebar layouts (templates handle their own)
-      Object.values(sectionsMeta).forEach(meta=>{
-        const el = byId(meta.nodeId);
-        if(el){ el.style.gridColumn=''; el.style.gridRow=''; }
-      });
-    }
-    fitPreview();
-    saveState();
+    fitPreview(); saveState();
   }
 
-  /* ===== Fit & Guides ===== */
+  /* Fit & Guides */
   let fitEnabled = true;
   const fitToggle = document.getElementById('fitToggle');
   const guideToggle = document.getElementById('guideToggle');
@@ -648,8 +652,8 @@ if (userInput === password) {
     }
   }
 
-  /* ===== Auto-save / restore ===== */
-  const STORAGE_KEY = 'resumeBuilderState_v7'; // bump version for template pack
+  /* Auto-save / restore */
+  const STORAGE_KEY = 'resumeBuilderState_v9';
   function saveState(){
     const state = {
       name:val('name'), title:val('title'), phone:val('phone'), email:val('email'),
@@ -671,7 +675,6 @@ if (userInput === password) {
       })),
       skills: Array.from(document.querySelectorAll('#skills-section .entry .skill-text')).map(t=>t.value),
       certs: Array.from(document.querySelectorAll('#cert-section .entry .cert-name')).map(t=>t.value),
-      // NEW
       sectionOrder,
       sectionsMeta: {
         summary:{title:sectionsMeta.summary.title, desc:sectionsMeta.summary.desc},
@@ -694,14 +697,13 @@ if (userInput === password) {
       setVal('specialty',s.specialty); setVal('summary',s.summary);
 
       (s.experience||[]).forEach(it=>{
-        const node = addEntryAfter(null,'experience-section',expMarkup()); // append
+        const node = addEntryAfter(null,'experience-section',expMarkup());
         sv(node,'.job-title',it.job); sv(node,'.employer',it.employer); sv(node,'.city',it.city); sv(node,'.state',it.state);
         sv(node,'.start-date',it.start);
         const presentChk = node.querySelector('.present-chk');
         const end = node.querySelector('.end-date');
-        if (it.present || String(it.end).toLowerCase()==='present') {
-          presentChk.checked = true; end.value = ''; end.disabled = true; end.placeholder = 'Present';
-        } else { sv(node,'.end-date',it.end); }
+        if (it.present || String(it.end).toLowerCase()==='present') { presentChk.checked = true; end.value = ''; end.disabled = true; end.placeholder = 'Present'; }
+        else { sv(node,'.end-date',it.end); }
         sv(node,'.desc-type',it.descType||'paragraph'); sv(node,'.description',it.desc);
       });
       (s.education||[]).forEach(it=>{
@@ -719,7 +721,6 @@ if (userInput === password) {
       fitToggle.checked = s.breaks?.fit ?? true; fitEnabled = fitToggle.checked;
       guideToggle.checked = s.breaks?.guides ?? true;
 
-      // NEW: restore section meta + order
       if(s.sectionsMeta){
         Object.keys(s.sectionsMeta).forEach(k=>{
           sectionsMeta[k].title = s.sectionsMeta[k].title || '';
@@ -744,7 +745,7 @@ if (userInput === password) {
     arr.forEach(txt=>{ const d=addSkillOrCert(containerId, cls, placeholder); d.querySelector('textarea').value = txt; });
   }
 
-  /* ===== Update Preview ===== */
+  /* Update Preview */
   function updatePreview(){
     const name=val('name')||'Full Name';
     const title=val('title')||'Title';
@@ -767,13 +768,13 @@ if (userInput === password) {
     resumeEl.style.fontFamily = val('fontFamily');
     resumeEl.style.fontSize = val('fontSize');
 
-    // BASE layout classes
+    // BASE layout (only used when Template=None)
     const layout = val('layout') || 'classic';
     const layoutClasses = ['layout-classic','layout-compact','layout-sidebar','layout-timeline','layout-centered'];
     resumeEl.classList.remove(...layoutClasses);
     resumeEl.classList.add(`layout-${layout}`);
 
-    // Template classes (mutually exclusive)
+    // Templates (mutually exclusive) — CSS areas handle the flow automatically
     const tpl = val('templatePreset');
     const tplClasses = ['template-nicu','template-banner','template-projects','template-emerald'];
     resumeEl.classList.remove(...tplClasses);
@@ -782,6 +783,7 @@ if (userInput === password) {
     else if(tpl==='projects') resumeEl.classList.add('template-projects');
     else if(tpl==='emerald') resumeEl.classList.add('template-emerald');
 
+    // Summary
     byId('prevSummary').innerHTML = (val('summary')||'').replace(/\n/g,'<br>');
 
     // Experience
@@ -824,7 +826,7 @@ if (userInput === password) {
       }
     });
 
-    // Skills (bullets from line breaks ONLY)
+    // Skills (textarea → bullets)
     const skillContainer = byId('prevSkills'); skillContainer.innerHTML='';
     document.querySelectorAll('#skills-section .entry').forEach(entry=>{
       const text = entry.querySelector('.skill-text')?.value || '';
@@ -832,14 +834,14 @@ if (userInput === password) {
       if(bullets){ skillContainer.insertAdjacentHTML('beforeend', `<ul class="entry-description">${bullets}</ul>`); }
     });
 
-    // Certifications
+    // Certs
     const certContainer = byId('prevCerts'); certContainer.innerHTML='';
     document.querySelectorAll('#cert-section .entry').forEach(entry=>{
       const name = entry.querySelector('.cert-name')?.value;
       if(name){ certContainer.insertAdjacentHTML('beforeend', `<div class="entry"><div class="entry-title">${name}</div></div>`); }
     });
 
-    // ATS highlights
+    // ATS highlighting
     atsContainer.querySelectorAll('span').forEach(span=>{
       const text = ( val('summary') + " " +
         Array.from(document.querySelectorAll('#experience-section .entry .description')).map(d=>d.value).join(' ') + " " +
@@ -848,7 +850,6 @@ if (userInput === password) {
       span.classList.toggle('used', text.includes(span.textContent.toLowerCase()));
     });
 
-    // Apply custom section titles/descriptions and ordering
     applySectionTitles();
     applySectionDescriptions();
     applySectionOrder();
@@ -860,7 +861,7 @@ if (userInput === password) {
 
   function setAccentVars(el, baseHex){
     el.style.setProperty('--accent', baseHex);
-    el.style.setProperty('--accent-rail', lightenHex(baseHex, 0.82)); // light tint for rails/banners
+    el.style.setProperty('--accent-rail', lightenHex(baseHex, 0.82));
   }
   function lightenHex(hex, amt){
     hex = hex.replace('#','');
@@ -870,55 +871,41 @@ if (userInput === password) {
     return '#'+[lr,lg,lb].map(n=>n.toString(16).padStart(2,'0')).join('');
   }
 
-  /* ===== Focus-aware insertion: add below current card ===== */
-  let currentExpEntry = null;
-  let currentEduEntry = null;
-  document.getElementById('experience-section').addEventListener('focusin', (e)=>{
-    const card = e.target.closest('.entry'); if(card) currentExpEntry = card;
-  });
-  document.getElementById('education-section').addEventListener('focusin', (e)=>{
-    const card = e.target.closest('.entry'); if(card) currentEduEntry = card;
-  });
+  /* Focus-aware insertion */
+  let currentExpEntry = null, currentEduEntry = null;
+  document.getElementById('experience-section').addEventListener('focusin', (e)=>{ const card = e.target.closest('.entry'); if(card) currentExpEntry = card; });
+  document.getElementById('education-section').addEventListener('focusin', (e)=>{ const card = e.target.closest('.entry'); if(card) currentEduEntry = card; });
 
-  /* ===== Entry Markups ===== */
-  function expMarkup(){
-    return `
-      <div class="entry-card">
-        <input type="text" class="job-title" placeholder="Job Title">
-        <input type="text" class="employer" placeholder="Employer">
-        <input type="text" class="city" placeholder="City">
-        <input type="text" class="state" placeholder="State">
-        <label class="subtle">Start / End Date</label>
-        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-          <input type="date" class="start-date" style="flex:1"> <span class="subtle">—</span>
-          <input type="date" class="end-date" style="flex:1">
-          <label class="subtle" style="display:inline-flex; align-items:center; gap:6px;">
-            <input type="checkbox" class="present-chk"> Present
-          </label>
-        </div>
-        <label class="subtle">Description</label>
-        <select class="desc-type"><option value="paragraph">Paragraph</option><option value="bullet">Bullet Points</option></select>
-        <textarea class="description" rows="3" placeholder="One item per line for bullets."></textarea>
-        <button class="delete-btn" title="Remove">✕</button>
+  function expMarkup(){ return `
+    <div class="entry-card">
+      <input type="text" class="job-title" placeholder="Job Title">
+      <input type="text" class="employer" placeholder="Employer">
+      <input type="text" class="city" placeholder="City">
+      <input type="text" class="state" placeholder="State">
+      <label class="subtle">Start / End Date</label>
+      <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <input type="date" class="start-date" style="flex:1"> <span class="subtle">—</span>
+        <input type="date" class="end-date" style="flex:1">
+        <label class="subtle" style="display:inline-flex; align-items:center; gap:6px;">
+          <input type="checkbox" class="present-chk"> Present
+        </label>
       </div>
-    `;
-  }
-  function eduMarkup(){
-    const thisYear = new Date().getFullYear();
-    return `
-      <div class="entry-card">
-        <input type="text" class="degree" placeholder="Degree / Certification">
-        <input type="text" class="school" placeholder="School / Institution">
-        <input type="text" class="city" placeholder="City">
-        <input type="text" class="state" placeholder="State">
-        <label class="subtle">Graduated (Year)</label>
-        <input type="number" class="grad-year" min="1950" max="${thisYear+6}" step="1" placeholder="${thisYear}">
-        <button class="delete-btn" title="Remove">✕</button>
-      </div>
-    `;
-  }
+      <label class="subtle">Description</label>
+      <select class="desc-type"><option value="paragraph">Paragraph</option><option value="bullet">Bullet Points</option></select>
+      <textarea class="description" rows="3" placeholder="One item per line for bullets."></textarea>
+      <button class="delete-btn" title="Remove">✕</button>
+    </div>`; }
+  function eduMarkup(){ const thisYear = new Date().getFullYear(); return `
+    <div class="entry-card">
+      <input type="text" class="degree" placeholder="Degree / Certification">
+      <input type="text" class="school" placeholder="School / Institution">
+      <input type="text" class="city" placeholder="City">
+      <input type="text" class="state" placeholder="State">
+      <label class="subtle">Graduated (Year)</label>
+      <input type="number" class="grad-year" min="1950" max="${thisYear+6}" step="1" placeholder="${thisYear}">
+      <button class="delete-btn" title="Remove">✕</button>
+    </div>`; }
 
-  /* ===== Add helpers (insert after current) ===== */
   function addEntryAfter(afterNode, containerId, htmlContent){
     const container = byId(containerId);
     const div = document.createElement('div'); div.className='entry'; div.innerHTML=htmlContent;
@@ -926,13 +913,11 @@ if (userInput === password) {
     const del = div.querySelector('.delete-btn');
     if(del) del.addEventListener('click',()=>{ div.remove(); ensureAtLeastOneListItem(containerId); updatePreview(); });
 
-    // listen for input & select changes
     div.querySelectorAll('input,textarea,select').forEach(el=>{
       el.addEventListener('input', updatePreview);
       el.addEventListener('change', updatePreview);
     });
 
-    // Present checkbox behavior
     const present = div.querySelector('.present-chk');
     const endInput = div.querySelector('.end-date');
     if (present && endInput) {
@@ -943,11 +928,9 @@ if (userInput === password) {
       });
     }
 
-    if (afterNode && afterNode.parentNode === container) {
-      afterNode.after(div);         // insert below current focused card
-    } else {
-      container.appendChild(div);   // otherwise append to end
-    }
+    if (afterNode && afterNode.parentNode === container) afterNode.after(div);
+    else container.appendChild(div);
+
     updatePreview();
     return div;
   }
@@ -959,7 +942,6 @@ if (userInput === password) {
       if(containerId==='cert-section') addSkillOrCert('cert-section','cert-name','Certification...');
     }
   }
-
   function addSkillOrCert(containerId, className, placeholder){
     const container=document.getElementById(containerId);
     const div=document.createElement('div'); div.className='entry';
@@ -973,23 +955,18 @@ if (userInput === password) {
     return div;
   }
 
-  /* ===== Wire up actions ===== */
-  document.getElementById('add-experience').addEventListener('click',()=>{
-    addEntryAfter(currentExpEntry,'experience-section', expMarkup());
-  });
-  document.getElementById('add-education').addEventListener('click',()=>{
-    addEntryAfter(currentEduEntry,'education-section', eduMarkup());
-  });
+  /* Wire up */
+  document.getElementById('add-experience').addEventListener('click',()=>{ addEntryAfter(currentExpEntry,'experience-section', expMarkup()); });
+  document.getElementById('add-education').addEventListener('click',()=>{ addEntryAfter(currentEduEntry,'education-section', eduMarkup()); });
   document.getElementById('add-skill').addEventListener('click',()=>addSkillOrCert('skills-section','skill-text','Skill...'));
   document.getElementById('add-cert').addEventListener('click',()=>addSkillOrCert('cert-section','cert-name','Certification...'));
 
-  // seed one skills & one cert
   addSkillOrCert('skills-section','skill-text','Skill...');
   addSkillOrCert('cert-section','cert-name','Certification...');
 
   ['theme','fontFamily','fontSize','layout','templatePreset'].forEach(id=>{
-    byId(id).addEventListener('change',()=>{ updatePreview(); });
-    byId(id).addEventListener('input',()=>{ updatePreview(); });
+    byId(id).addEventListener('change', updatePreview);
+    byId(id).addEventListener('input', updatePreview);
   });
   ['summary','name','title','phone','email'].forEach(id=>byId(id).addEventListener('input',updatePreview));
   byId('specialty').addEventListener('change',function(){ const v=this.value; if(v) byId('summary').value=specialties[v]; updatePreview(); });
@@ -997,55 +974,10 @@ if (userInput === password) {
     const el=byId(id); if(el) el.addEventListener('change', ()=>{ applyManualBreaks(); fitPreview(); saveState(); });
   });
 
-  /* ===== PDF Export ===== */
-  document.getElementById('downloadBtn').addEventListener('click', () => {
-    const source = document.getElementById('resumePreview');
-    const clone = source.cloneNode(true);
-    clone.id = 'resumePreviewCapture';
-    clone.style.margin = '0'; clone.style.boxShadow = 'none'; clone.style.transform = 'none';
-
-    const host = document.createElement('div');
-    host.id = 'captureHost'; host.style.position = 'fixed'; host.style.left = '0'; host.style.top = '0';
-    host.style.width = '8.5in'; host.style.background = '#fff'; host.style.zIndex = '2147483647';
-    host.style.padding = '0'; host.style.margin = '0'; host.appendChild(clone);
-    document.body.appendChild(host);
-
-    const opts = { margin: 0, filename: 'Resume.pdf',
-      image: { type: 'jpeg', quality: 0.98 },
-      pagebreak: { mode: ['css','legacy'] },
-      html2canvas: { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
-      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
-    };
-    html2pdf().set(opts).from(clone).save().finally(()=>host.remove());
-  });
-
-  /* ===== Soft Reset (no reload) ===== */
-  document.getElementById('resetBtn').addEventListener('click',()=>{
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(INSTRUCTIONS_KEY); // show tips again after reset
-    const inst = document.getElementById('instructionBox'); inst?.classList.remove('hidden');
-
-    ['name','title','phone','email','summary','specialty'].forEach(id=>{ const el=byId(id); if(el){ el.value = ''; }});
-    setVal('templatePreset','none');
-    setVal('theme','classic'); setVal('layout','classic'); setVal('fontFamily','Roboto, sans-serif'); setVal('fontSize','12pt');
-    document.querySelectorAll('#experience-section .entry, #education-section .entry, #skills-section .entry, #cert-section .entry').forEach(n=>n.remove());
-    addSkillOrCert('skills-section','skill-text','Skill...');
-    addSkillOrCert('cert-section','cert-name','Certification...');
-
-    // reset sections meta/order
-    Object.values(sectionsMeta).forEach(m=>{ m.title=''; m.desc=''; });
-    sectionOrder=['summary','experience','education','skills','certs'];
-    buildSectionsManager();
-
-    byId('pbBeforeExperience').checked = false; byId('pbBeforeEducation').checked = false; byId('pbBeforeSkills').checked = false;
-    byId('fitToggle').checked = true; fitEnabled = true; byId('guideToggle').checked = true;
-    updatePreview();
-  });
-
-  /* ===== Boot ===== */
+  /* Boot */
   loadState();
-  buildSectionsManager();      // build with restored meta/order if any
-  updatePreview();             // applies titles, descriptions, and order
+  buildSectionsManager();
+  updatePreview();
   fitPreview();
 }
 </script>
